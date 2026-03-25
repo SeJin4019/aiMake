@@ -81,48 +81,85 @@ export const exportToDocx = async (questions, passage) => {
 }
 
 export const exportToPdf = async (questions, passage) => {
-  const doc = new jsPDF()
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const margin = 20
-  let y = 20
-
-  // Helper for text wrapping
-  const addText = (text, size = 10, isBold = false, marginBottom = 5) => {
-    doc.setFontSize(size)
-    doc.setFont('helvetica', isBold ? 'bold' : 'normal')
-    
-    // Simple text wrapping - jspdf splitTextToSize
-    const lines = doc.splitTextToSize(text, pageWidth - margin * 2)
-    
-    if (y + lines.length * (size / 2) > 280) {
-      doc.addPage()
-      y = 20
-    }
-    
-    doc.text(lines, margin, y)
-    y += lines.length * (size / 2) + marginBottom
-  }
-
-  addText('English Exam Questions', 18, true, 10)
-  addText('Passage:', 14, true, 5)
-  addText(passage, 10, false, 10)
-
-  questions.forEach((q, index) => {
-    addText(`Q${index + 1}. [${getTypeLabel(q.type)}]`, 12, true, 5)
-    addText(q.question, 11, false, 5)
-    
-    if (q.options) {
-      q.options.forEach((opt, oIndex) => {
-        addText(`${oIndex + 1}. ${opt}`, 10, false, 2)
-      })
-      y += 3
-    }
-
-    addText(`Answer: ${q.answer}`, 10, true, 2)
-    addText(`Explanation: ${q.explanation}`, 10, false, 8)
-  })
-
-  doc.save(`English_Exam_${new Date().toISOString().split('T')[0]}.pdf`)
+  const printWindow = window.open('', '_blank');
+  const date = new Date().toISOString().split('T')[0];
+  
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>English Exam - ${date}</title>
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Inter:wght@400;700&display=swap');
+        body {
+          font-family: 'Inter', 'Noto Sans KR', sans-serif;
+          line-height: 1.6;
+          color: #1e293b;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 40px;
+        }
+        h1 { text-align: center; color: #4f46e5; margin-bottom: 40px; }
+        .section-title { font-size: 1.2rem; font-weight: bold; border-bottom: 2px solid #e2e8f0; margin: 30px 0 15px; padding-bottom: 5px; }
+        .passage { background: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #4f46e5; margin-bottom: 30px; font-style: italic; }
+        .question-card { margin-bottom: 30px; page-break-inside: avoid; }
+        .question-header { font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .type-tag { font-size: 0.75rem; background: #eef2ff; color: #4f46e5; padding: 2px 10px; border-radius: 99px; font-weight: 600; }
+        .question-text { font-size: 1.1rem; margin-bottom: 15px; }
+        .options { margin-left: 20px; margin-top: 10px; list-style-type: none; padding: 0; }
+        .option-item { margin-bottom: 8px; font-size: 1rem; }
+        .answer-key { margin-top: 15px; font-size: 0.9rem; background: #f1f5f9; padding: 15px; border-radius: 6px; }
+        .label { font-weight: bold; color: #4f46e5; margin-right: 8px; }
+        .explanation { color: #475569; margin-top: 5px; }
+        @media print {
+          body { padding: 20px; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <h1>English Exam Questions</h1>
+      
+      <div class="section-title">Passage</div>
+      <div class="passage">${passage}</div>
+      
+      <div class="section-title">Questions</div>
+      ${questions.map((q, index) => `
+        <div class="question-card">
+          <div class="question-header">
+            <span>Question ${index + 1}</span>
+            <span class="type-tag">${getTypeLabel(q.type)}</span>
+          </div>
+          <div class="question-text">${q.question.replace(/\n/g, '<br>')}</div>
+          
+          ${q.options ? `
+            <ul class="options">
+              ${q.options.map((opt, oIndex) => `
+                <li class="option-item">${oIndex + 1}. ${opt}</li>
+              `).join('')}
+            </ul>
+          ` : ''}
+          
+          <div class="answer-key">
+            <div><span class="label">Answer:</span> ${q.answer}</div>
+            <div class="explanation"><span class="label">Explanation:</span> ${q.explanation}</div>
+          </div>
+        </div>
+      `).join('')}
+      
+      <script>
+        window.onload = () => {
+          setTimeout(() => {
+            window.print();
+          }, 500);
+        };
+      </script>
+    </body>
+    </html>
+  `;
+  
+  printWindow.document.write(html);
+  printWindow.document.close();
 }
 
 const getTypeLabel = (type) => {

@@ -5,7 +5,7 @@ import PassageInput from './components/PassageInput.vue'
 import QuestionSettings from './components/QuestionSettings.vue'
 import QuestionList from './components/QuestionList.vue'
 import { generateQuestions } from './services/QuestionGenerator'
-import { exportToDocx, exportToPdf } from './services/Exporter'
+import { exportToPdf } from './services/Exporter'
 import confetti from 'canvas-confetti'
 
 const passage = ref('')
@@ -50,14 +50,9 @@ const handleGenerate = async () => {
   }
 }
 
-const handleExport = async (format) => {
+const handleExport = async () => {
   if (generatedQuestions.value.length === 0) return
-  
-  if (format === 'docx') {
-    await exportToDocx(generatedQuestions.value, passage.value)
-  } else {
-    await exportToPdf(generatedQuestions.value, passage.value)
-  }
+  await exportToPdf(generatedQuestions.value, passage.value)
 }
 </script>
 
@@ -71,11 +66,8 @@ const handleExport = async (format) => {
         <h1>English Exam AI</h1>
       </div>
       <div v-if="generatedQuestions.length > 0" class="actions fade-in">
-        <button @click="handleExport('docx')" class="btn-outline">
-          <Download :size="18" /> DOCX
-        </button>
-        <button @click="handleExport('pdf')" class="btn-primary">
-          <Download :size="18" /> PDF
+        <button @click="handleExport" class="btn-primary">
+          <Download :size="18" /> PDF 다운로드
         </button>
       </div>
     </div>
@@ -168,8 +160,18 @@ const handleExport = async (format) => {
     </div>
   </main>
 
-  <footer class="mt-auto py-lg text-center text-muted">
-    <p>&copy; 2026 English Exam AI. Powered by Google Gemini.</p>
+  <footer class="footer fade-in">
+    <div class="container footer-content">
+      <div class="footer-divider"></div>
+      <div class="footer-info">
+        <p class="copyright">&copy; 2026 English Exam AI. All rights reserved.</p>
+        <div class="powered-by">
+          <span>Powered by</span>
+          <img src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d47353039331e16477cc.svg" alt="Gemini" class="gemini-logo" />
+          <span class="gemini-text">Google Gemini</span>
+        </div>
+      </div>
+    </div>
   </footer>
 </template>
 
@@ -188,6 +190,18 @@ const handleExport = async (format) => {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem !important;
+}
+
+@media (max-width: 640px) {
+  .nav-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem !important;
+  }
+  
+  .logo h1 {
+    font-size: 1.25rem;
+  }
 }
 
 .logo {
@@ -221,6 +235,13 @@ const handleExport = async (format) => {
   align-items: start;
 }
 
+@media (max-width: 900px) {
+  .grid-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
 .section-header {
   display: flex;
   align-items: center;
@@ -236,6 +257,12 @@ const handleExport = async (format) => {
 .sidebar {
   position: sticky;
   top: 90px;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: static;
+  }
 }
 
 .empty-state, .generating-state {
@@ -280,8 +307,6 @@ const handleExport = async (format) => {
 }
 
 @media (max-width: 900px) {
-  .grid-layout {
-    grid-template-columns: 1fr;
-  }
+  /* 제거 - 위로 통합됨 */
 }
 </style>

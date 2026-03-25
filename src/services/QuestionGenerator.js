@@ -35,7 +35,7 @@ export const generateQuestions = async (passage, settings, apiKey, model = 'gemi
     const payload = {
       contents: [{
         parts: [{
-          text: `${basePrompt}\n\nPassage: "${passage}"\nTypes: ${settings.selectedTypes.join(', ')}\nCount: ${settings.countPerType}\n\nResponse Format (must be JSON):\n${formatTemplate}`
+          text: `${basePrompt}\n\nPassage: "${passage}"\nDifficulty: ${settings.difficulty}\nTypes: ${settings.selectedTypes.join(', ')}\nCount: ${settings.countPerType}\n\nResponse Format (must be JSON):\n${formatTemplate}`
         }]
       }]
     };

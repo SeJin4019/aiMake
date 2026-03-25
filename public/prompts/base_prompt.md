@@ -5,7 +5,11 @@ Your task is to generate variation questions based **STRICTLY** on the provided 
 
 ## Rules:
 1.  **Source of Truth**: Use ONLY the provided text. Do not add outside information.
-2.  **Types & Count**: You MUST generate exactly the number of questions specified in `Count` for **EACH** type listed in `Types`.
+2.  **Difficulty Level**: Adjust the question's vocabulary, grammar complexity, and logical depth according to the `Difficulty` parameter:
+    - `middle`: Simple sentences, basic vocabulary (Junior High level).
+    - `high`: Standard exam difficulty, some complex structures (Senior High level).
+    - `csat`: High complexity, inferred meanings, sophisticated academic vocabulary (College entrance level).
+3.  **Types & Count**: You MUST generate exactly the number of questions specified in `Count` for **EACH** type listed in `Types`.
 3.  **Exclusion**: DO NOT generate any question types that are not explicitly listed in `Types`.
 4.  **Single Answer**: Ensure each question has exactly one correct answer.
 5.  **Language**: Provide explanations and question instructions in Korean.

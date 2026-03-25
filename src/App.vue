@@ -17,7 +17,8 @@ const generatedQuestions = ref([])
 const settings = reactive({
   types: ['main-idea-ko', 'main-idea-en', 'blank', 'insertion', 'ordering', 'descriptive'],
   selectedTypes: ['main-idea-ko', 'blank'],
-  countPerType: 1
+  countPerType: 1,
+  difficulty: 'high' // 'middle', 'high', 'csat'
 })
 
 const handleGenerate = async () => {
@@ -93,6 +94,7 @@ const handleExport = async (format) => {
           <QuestionSettings 
             v-model:selectedTypes="settings.selectedTypes"
             v-model:countPerType="settings.countPerType"
+            v-model:difficulty="settings.difficulty"
           />
 
           <div class="mt-md">

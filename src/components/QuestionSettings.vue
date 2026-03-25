@@ -1,8 +1,8 @@
 <script setup>
 import { Check, Hash, Languages, ListOrdered, Type, Edit3 } from 'lucide-vue-next'
 
-const props = defineProps(['selectedTypes', 'countPerType'])
-const emit = defineEmits(['update:selectedTypes', 'update:countPerType'])
+const props = defineProps(['selectedTypes', 'countPerType', 'difficulty'])
+const emit = defineEmits(['update:selectedTypes', 'update:countPerType', 'update:difficulty'])
 
 const types = [
   { id: 'main-idea-ko', label: '주제 찾기 (한글)', icon: Languages },
@@ -56,6 +56,26 @@ const updateCount = (e) => {
         <select :value="countPerType" @change="updateCount" class="count-select">
           <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
         </select>
+      </div>
+    </div>
+
+    <div class="mt-lg">
+      <label class="label-heading">Difficulty Level</label>
+      <div class="difficulty-grid">
+        <button 
+          v-for="level in [
+            { id: 'middle', label: '중등', color: '#10b981' },
+            { id: 'high', label: '고등', color: '#4f46e5' },
+            { id: 'csat', label: '수능', color: '#ef4444' }
+          ]" 
+          :key="level.id"
+          @click="$emit('update:difficulty', level.id)"
+          class="diff-btn"
+          :class="{ 'active': difficulty === level.id }"
+          :style="{ '--active-color': level.color }"
+        >
+          {{ level.label }}
+        </button>
       </div>
     </div>
   </div>
@@ -115,5 +135,29 @@ const updateCount = (e) => {
 .count-select {
   padding: 0.4rem 0.75rem;
   width: 80px;
+}
+
+.difficulty-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.diff-btn {
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.diff-btn.active {
+  background: var(--active-color);
+  border-color: var(--active-color);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 </style>

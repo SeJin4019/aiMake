@@ -16,8 +16,8 @@ export const generateQuestions = async (passage, settings, apiKey, model = 'gemi
   try {
     // 1. 공용 리소스 읽기 (public 폴더)
     const [basePromptRes, formatTemplateRes] = await Promise.all([
-      fetch('/prompts/base_prompt.md'),
-      fetch('/templates/question_format.json')
+      fetch('prompts/base_prompt.md'),
+      fetch('templates/question_format.json')
     ]);
     
     if (!basePromptRes.ok || !formatTemplateRes.ok) {

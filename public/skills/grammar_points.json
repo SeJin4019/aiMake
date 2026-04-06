@@ -1,7 +1,0 @@
-{
-  "grammar_points": [
-    { "name": "Passive Voice", "rule": "be + p.p." },
-    { "name": "Relative Clause", "rule": "who/which/that" },
-    { "name": "Inversion", "rule": "Negative adverb + aux + S + V" }
-  ]
-}

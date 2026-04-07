@@ -10,7 +10,6 @@
  */
 
 const DEFAULT_MODEL = 'gemini-1.5-flash';
-const REVIEW_MODEL = 'gemini-1.5-flash';
 
 const MAX_API_RETRY = 2;
 const MAX_REGENERATE_ROUND = 1;
@@ -412,7 +411,7 @@ export const generateQuestions = async (
       passage,
       questions: draftQuestions,
       apiKey: cleanApiKey,
-      model: REVIEW_MODEL
+      model: model // 사용자가 선택한 모델을 검수에도 동일하게 사용
     });
 
     const { validQuestions, invalidItems } = splitValidAndInvalid(

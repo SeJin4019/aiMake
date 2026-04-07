@@ -237,7 +237,7 @@ export const getAvailableModels = async (apiKey) => {
 
 const tryGeminiModels = async ({ apiKey, initialModel, prompt, schema, temperature }) => {
   let fetchedModels = await getAvailableModels(apiKey);
-  const models = [initialModel, ...fetchedModels, 'gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-1.5-pro'];
+  const models = [initialModel, ...fetchedModels, 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-1.5-pro'];
   const uniqueModels = [...new Set(models)].filter(Boolean);
   
   let lastError;

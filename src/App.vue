@@ -10,7 +10,7 @@ import confetti from 'canvas-confetti'
 
 const passage = ref('')
 const apiKey = ref(localStorage.getItem('gemini_api_key') || '')
-const selectedModel = ref('gemini-1.5-flash')
+const selectedModel = ref('gemini-2.5-flash')
 const isGenerating = ref(false)
 const generatedQuestions = ref([])
 

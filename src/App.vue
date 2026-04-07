@@ -10,7 +10,7 @@ import confetti from 'canvas-confetti'
 
 const passage = ref('')
 const apiKey = ref(localStorage.getItem('gemini_api_key') || '')
-const selectedModel = ref(localStorage.getItem('gemini_model') || 'gemini-1.5-flash')
+const selectedModel = ref('gemini-3-flash-preview')
 const isGenerating = ref(false)
 const generatedQuestions = ref([])
 
@@ -30,7 +30,6 @@ const handleGenerate = async () => {
   
   // 저장
   localStorage.setItem('gemini_api_key', apiKey.value);
-  localStorage.setItem('gemini_model', selectedModel.value);
 
   isGenerating.value = true
   try {
@@ -105,16 +104,7 @@ const handleExport = async () => {
             </p>
           </div>
 
-          <div class="mt-md">
-            <label class="section-label">AI Model</label>
-            <select v-model="selectedModel" class="w-full mt-sm api-input">
-              <option value="gemini-2.5-flash">Gemini 2.5 Flash (최신)</option>
-              <option value="gemini-flash-latest">Gemini Flash Latest</option>
-              <option value="gemini-1.5-flash">Gemini 1.5 Flash (표준)</option>
-              <option value="gemini-pro-latest">Gemini Pro Latest</option>
-              <option value="gemini-pro">Gemini 1.0 Pro</option>
-            </select>
-          </div>
+
 
           <button 
             @click="handleGenerate" 

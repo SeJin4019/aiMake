@@ -215,9 +215,30 @@ const callGeminiJson = async ({
   }
 };
 
+let cachedAvailableModels = [];
+
+export const getAvailableModels = async (apiKey) => {
+  if (cachedAvailableModels.length > 0) return cachedAvailableModels;
+  try {
+    const response = await fetch(`${GEMINI_BASE_URL}/models?key=${apiKey}`);
+    if (response.ok) {
+      const data = await response.json();
+      const validModels = (data.models || [])
+        .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
+        .map(m => m.name.replace('models/', ''));
+      cachedAvailableModels = validModels;
+      return validModels;
+    }
+  } catch (e) {
+    console.warn("Failed to fetch available models", e);
+  }
+  return [];
+};
+
 const tryGeminiModels = async ({ apiKey, initialModel, prompt, schema, temperature }) => {
-  const models = [initialModel, 'gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-pro', 'gemini-1.5-pro'];
-  const uniqueModels = [...new Set(models)];
+  let fetchedModels = await getAvailableModels(apiKey);
+  const models = [initialModel, ...fetchedModels, 'gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-1.5-pro'];
+  const uniqueModels = [...new Set(models)].filter(Boolean);
   
   let lastError;
   for (const currentModel of uniqueModels) {

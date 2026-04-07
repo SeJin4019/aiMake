@@ -34,8 +34,8 @@ const updateCount = (e) => {
     <div class="mb-lg">
       <label class="label-heading">AI Model</label>
       <select :value="selectedModel" @change="$emit('update:selectedModel', $event.target.value)" class="w-full type-btn mt-xs" style="padding: 0.5rem 1rem;">
-        <option value="gemini-3.1-flash">Gemini 3.1 Flash (빠름)</option>
-        <option value="gemini-3.1-pro">Gemini 3.1 Pro (고성능)</option>
+        <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠름)</option>
+        <option value="gemini-1.5-pro">Gemini 1.5 Pro (고성능)</option>
       </select>
     </div>
 

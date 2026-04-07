@@ -9,8 +9,8 @@
  * - JSON substring 파싱 제거
  */
 
-const DEFAULT_MODEL = 'gemini-3-flash-preview';
-const REVIEW_MODEL = 'gemini-3-flash-preview';
+const DEFAULT_MODEL = 'gemini-1.5-flash';
+const REVIEW_MODEL = 'gemini-1.5-flash';
 
 const MAX_API_RETRY = 2;
 const MAX_REGENERATE_ROUND = 1;

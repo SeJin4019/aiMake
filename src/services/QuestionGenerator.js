@@ -165,10 +165,14 @@ const callGeminiJson = async ({
     ],
     generationConfig: {
       temperature,
-      responseMimeType: 'application/json',
-      responseSchema: schema
+      responseMimeType: 'application/json'
     }
   };
+
+  // 1.5, 2.0 모델만 responseSchema 지원
+  if (model.includes('1.5') || model.includes('2.0') || model.includes('flash') || model.includes('pro-experimental')) {
+    payload.generationConfig.responseSchema = schema;
+  }
 
   const response = await fetch(url, {
     method: 'POST',
@@ -209,6 +213,34 @@ const callGeminiJson = async ({
   } catch (error) {
     throw new Error(`JSON 파싱 실패: ${error.message}`);
   }
+};
+
+const tryGeminiModels = async ({ apiKey, initialModel, prompt, schema, temperature }) => {
+  const models = [initialModel, 'gemini-1.5-flash', 'gemini-1.0-pro', 'gemini-pro', 'gemini-1.5-pro'];
+  const uniqueModels = [...new Set(models)];
+  
+  let lastError;
+  for (const currentModel of uniqueModels) {
+    try {
+      console.log(`Trying model: ${currentModel}`);
+      const result = await callGeminiJson({
+        apiKey,
+        model: currentModel,
+        prompt,
+        schema,
+        temperature
+      });
+      return { result, successfulModel: currentModel };
+    } catch (e) {
+      console.warn(`${currentModel} failed:`, e.message);
+      lastError = e;
+      // 인증 오류면 다른 모델도 무조건 실패하므로 바로 중단
+      if (e.message.includes('API key') || e.message.includes('API_KEY')) {
+        throw e;
+      }
+    }
+  }
+  throw lastError;
 };
 
 const buildGeneratePrompt = ({ basePrompt, passage, settings }) => {
@@ -292,9 +324,9 @@ const generateDraftQuestions = async ({ passage, settings, apiKey, model }) => {
     settings
   });
 
-  const result = await callGeminiJson({
+  const { result, successfulModel } = await tryGeminiModels({
     apiKey,
-    model,
+    initialModel: model,
     prompt,
     schema: QUESTION_SCHEMA,
     temperature: 0.4
@@ -306,7 +338,7 @@ const generateDraftQuestions = async ({ passage, settings, apiKey, model }) => {
     throw new Error('생성된 문제를 해석하지 못했습니다.');
   }
 
-  return questions;
+  return { questions, successfulModel };
 };
 
 const reviewQuestions = async ({ passage, questions, apiKey, model }) => {
@@ -315,9 +347,9 @@ const reviewQuestions = async ({ passage, questions, apiKey, model }) => {
     questions
   });
 
-  const result = await callGeminiJson({
+  const { result } = await tryGeminiModels({
     apiKey,
-    model,
+    initialModel: model,
     prompt,
     schema: REVIEW_SCHEMA,
     temperature: 0.1
@@ -339,9 +371,9 @@ const regenerateInvalidQuestions = async ({
     invalidItems
   });
 
-  const result = await callGeminiJson({
+  const { result } = await tryGeminiModels({
     apiKey,
-    model,
+    initialModel: model,
     prompt,
     schema: QUESTION_SCHEMA,
     temperature: 0.4
@@ -398,20 +430,20 @@ export const generateQuestions = async (
   }
 
   try {
-    // 1차 생성
-    const draftQuestions = await generateDraftQuestions({
+    // 1차 생성 (Fallback 적용되어 성공한 모델을 알아냄)
+    const { questions: draftQuestions, successfulModel } = await generateDraftQuestions({
       passage,
       settings,
       apiKey: cleanApiKey,
       model
     });
 
-    // 2차 경량 검수
+    // 2차 경량 검수 (1차 생성에 성공한 모델을 그대로 사용)
     const reviewResults = await reviewQuestions({
       passage,
       questions: draftQuestions,
       apiKey: cleanApiKey,
-      model: model // 사용자가 선택한 모델을 검수에도 동일하게 사용
+      model: successfulModel
     });
 
     const { validQuestions, invalidItems } = splitValidAndInvalid(
@@ -432,7 +464,7 @@ export const generateQuestions = async (
         settings,
         invalidItems,
         apiKey: cleanApiKey,
-        model
+        model: successfulModel
       });
 
       if (regeneratedQuestions.length > 0) break;

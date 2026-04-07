@@ -30,8 +30,8 @@ const QUESTION_SCHEMA = {
           options: {
             type: 'array',
             items: { type: 'string' },
-            minItems: 4,
-            maxItems: 4
+            minItems: 5,
+            maxItems: 5
           },
           answer: { type: 'integer' },
           explanation: { type: 'string' },
@@ -99,10 +99,10 @@ const safeParseJson = (text) => {
 
 const normalizeQuestion = (question) => {
   if (!question || typeof question !== 'object') return null;
-  if (!Array.isArray(question.options) || question.options.length !== 4) return null;
+  if (!Array.isArray(question.options) || question.options.length !== 5) return null;
 
   const answer = Number(question.answer);
-  if (!Number.isInteger(answer) || answer < 1 || answer > 4) return null;
+  if (!Number.isInteger(answer) || answer < 1 || answer > 5) return null;
 
   return {
     type: String(question.type || '').trim(),
@@ -279,8 +279,8 @@ countPerType: ${settings.countPerType}
 [RULES]
 - Return JSON only.
 - Each question must have exactly one correct answer.
-- Each question must have exactly 4 options.
-- answer must be an integer from 1 to 4.
+- Each question must have exactly 5 options.
+- answer must be an integer from 1 to 5.
 - Include short explanation.
 - Include one short evidence sentence based only on the passage.
 - Do not add any text outside JSON.
@@ -327,9 +327,9 @@ ${JSON.stringify(invalidItems)}
 [RULES]
 - Return JSON only.
 - Keep the same question type for each regenerated item.
-- Each question must have exactly 4 options.
+- Each question must have exactly 5 options.
 - Exactly one correct answer.
-- answer must be an integer from 1 to 4.
+- answer must be an integer from 1 to 5.
 - Include short explanation.
 - Include one short evidence sentence.
 - Fix the reported issues.

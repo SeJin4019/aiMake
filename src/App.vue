@@ -10,7 +10,7 @@ import confetti from 'canvas-confetti'
 
 const passage = ref('')
 const apiKey = ref(localStorage.getItem('gemini_api_key') || '')
-const selectedModel = ref('gemini-3-flash-preview')
+const selectedModel = ref('gemini-3.1-flash')
 const isGenerating = ref(false)
 const generatedQuestions = ref([])
 
@@ -18,7 +18,7 @@ const settings = reactive({
   types: ['main-idea-ko', 'main-idea-en', 'blank', 'insertion', 'ordering', 'descriptive'],
   selectedTypes: ['main-idea-ko', 'blank'],
   countPerType: 1,
-  difficulty: 'high' // 'middle', 'high', 'csat'
+  difficulty: 'high' // 'low', 'middle', 'high', 'csat'
 })
 
 const handleGenerate = async () => {
@@ -83,6 +83,7 @@ const handleExport = async () => {
           </div>
           
           <QuestionSettings 
+            v-model:selectedModel="selectedModel"
             v-model:selectedTypes="settings.selectedTypes"
             v-model:countPerType="settings.countPerType"
             v-model:difficulty="settings.difficulty"

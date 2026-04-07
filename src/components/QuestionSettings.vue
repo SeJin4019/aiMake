@@ -1,8 +1,8 @@
 <script setup>
 import { Check, Hash, Languages, ListOrdered, Type, Edit3 } from 'lucide-vue-next'
 
-const props = defineProps(['selectedTypes', 'countPerType', 'difficulty'])
-const emit = defineEmits(['update:selectedTypes', 'update:countPerType', 'update:difficulty'])
+const props = defineProps(['selectedModel', 'selectedTypes', 'countPerType', 'difficulty'])
+const emit = defineEmits(['update:selectedModel', 'update:selectedTypes', 'update:countPerType', 'update:difficulty'])
 
 const types = [
   { id: 'main-idea-ko', label: '주제 찾기 (한글)', icon: Languages },
@@ -31,6 +31,14 @@ const updateCount = (e) => {
 
 <template>
   <div class="settings-group">
+    <div class="mb-lg">
+      <label class="label-heading">AI Model</label>
+      <select :value="selectedModel" @change="$emit('update:selectedModel', $event.target.value)" class="w-full type-btn mt-xs" style="padding: 0.5rem 1rem;">
+        <option value="gemini-3.1-flash">Gemini 3.1 Flash (빠름)</option>
+        <option value="gemini-3.1-pro">Gemini 3.1 Pro (고성능)</option>
+      </select>
+    </div>
+
     <label class="label-heading">Question Types</label>
     <div class="type-grid">
       <button 
@@ -64,6 +72,7 @@ const updateCount = (e) => {
       <div class="difficulty-grid">
         <button 
           v-for="level in [
+            { id: 'low', label: '초등', color: '#f59e0b' },
             { id: 'middle', label: '중등', color: '#10b981' },
             { id: 'high', label: '고등', color: '#4f46e5' },
             { id: 'csat', label: '수능', color: '#ef4444' }
@@ -139,7 +148,7 @@ const updateCount = (e) => {
 
 .difficulty-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.5rem;
 }
 
